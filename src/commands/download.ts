@@ -29,8 +29,6 @@ export async function runDownload(opts: DownloadCliOptions): Promise<void> {
   });
   process.stdout.write(pc.green(`Claude 已安装到: ${path}\n`));
   process.stdout.write(
-    pc.dim(
-      `请将 ${binDir()} 加入 PATH，例如:\n  export PATH="${binDir()}:$PATH"\n`,
-    ),
+    pc.dim(`请将 ${binDir()} 加入 PATH，例如:\n  export PATH="${binDir()}:$PATH"\n`),
   );
 }

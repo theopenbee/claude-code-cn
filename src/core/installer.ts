@@ -7,12 +7,7 @@ import pc from 'picocolors';
 import { UnsupportedPlatformError } from '../utils/errors.js';
 import { parseChecksumFile } from './checksum.js';
 import { downloadFile } from './download.js';
-import {
-  type Platform,
-  buildAssetName,
-  isSupportedPlatform,
-  platformString,
-} from './platform.js';
+import { type Platform, buildAssetName, isSupportedPlatform, platformString } from './platform.js';
 import { fetchLatestVersion } from './version.js';
 
 export interface InstallOptions {
@@ -63,9 +58,7 @@ export async function install(opts: InstallOptions): Promise<string> {
   } catch (err) {
     checksumAvailable = false;
     process.stderr.write(
-      pc.yellow(
-        `warning: 无法下载 checksums-sha256.txt, 将跳过校验 (${(err as Error).message})\n`,
-      ),
+      pc.yellow(`warning: 无法下载 checksums-sha256.txt, 将跳过校验 (${(err as Error).message})\n`),
     );
   }
 

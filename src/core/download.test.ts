@@ -1,7 +1,7 @@
 // src/core/download.test.ts
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
-import { createServer, type Server } from 'node:http';
+import { type Server, createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -50,7 +50,9 @@ describe('downloadFile', () => {
   it('rejects on non-2xx', async () => {
     const dir = mkdtempSync(join(tmpdir(), 'dl-'));
     const dst = join(dir, 'out.bin');
-    await expect(downloadFile(`${baseURL}/missing`, dst, null, { showProgress: false })).rejects.toThrow(/404/);
+    await expect(
+      downloadFile(`${baseURL}/missing`, dst, null, { showProgress: false }),
+    ).rejects.toThrow(/404/);
     rmSync(dir, { recursive: true, force: true });
   });
 

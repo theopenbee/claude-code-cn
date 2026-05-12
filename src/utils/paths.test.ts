@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { binDir, claudeBinPath, claudeSettingsPath, claudeJsonPath, stateDir } from './paths.js';
+import { binDir, claudeBinPath, claudeJsonPath, claudeSettingsPath, stateDir } from './paths.js';
 
 describe('paths', () => {
   it('stateDir returns ~/.claude-code-cn', () => {

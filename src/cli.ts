@@ -4,10 +4,7 @@ import { runDownload } from './commands/download.js';
 import { runEnv } from './commands/env.js';
 
 const program = new Command();
-program
-  .name('ccc')
-  .description('Claude Code 中国大陆下载与配置工具')
-  .version('0.0.0');
+program.name('ccc').description('Claude Code 中国大陆下载与配置工具').version('0.0.0');
 
 program
   .command('download')

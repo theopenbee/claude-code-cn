@@ -14,9 +14,7 @@ describe('parseChecksumFile', () => {
   });
 
   it('throws when asset is not listed', () => {
-    expect(() => parseChecksumFile(sample, 'claude-9.9.9-darwin-arm64')).toThrow(
-      /未找到资产/,
-    );
+    expect(() => parseChecksumFile(sample, 'claude-9.9.9-darwin-arm64')).toThrow(/未找到资产/);
   });
 
   it('ignores blank and malformed lines', () => {

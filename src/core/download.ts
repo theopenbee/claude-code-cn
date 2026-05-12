@@ -1,7 +1,7 @@
 // src/core/download.ts
 import type { Hash } from 'node:crypto';
-import { createWriteStream } from 'node:fs';
 import { once } from 'node:events';
+import { createWriteStream } from 'node:fs';
 import { Presets, SingleBar } from 'cli-progress';
 
 export interface DownloadOptions {
