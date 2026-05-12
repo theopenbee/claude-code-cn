@@ -97,7 +97,9 @@ describe('install', () => {
       } else if (req.url === '/claude-code-releases/1.2.3/checksums-sha256.txt') {
         // Claim a hash that won't match the body below
         res.writeHead(200);
-        res.end('0000000000000000000000000000000000000000000000000000000000000000  claude-1.2.3-linux-x64\n');
+        res.end(
+          '0000000000000000000000000000000000000000000000000000000000000000  claude-1.2.3-linux-x64\n',
+        );
       } else if (req.url === '/claude-code-releases/1.2.3/linux-x64/claude') {
         res.writeHead(200, { 'content-length': '5' });
         res.end('XXXXX');
