@@ -1,10 +1,14 @@
+import { createRequire } from 'node:module';
 import { Command } from 'commander';
 import pc from 'picocolors';
 import { runDownload } from './commands/download.js';
 import { runEnv } from './commands/env.js';
 
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json') as { version: string };
+
 const program = new Command();
-program.name('ccc').description('Claude Code 中国大陆下载与配置工具').version('0.0.0');
+program.name('ccc').description('Claude Code 中国大陆下载与配置工具').version(pkg.version);
 
 program
   .command('download')
