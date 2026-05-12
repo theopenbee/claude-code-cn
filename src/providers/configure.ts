@@ -24,12 +24,12 @@ async function ask<T>(fn: () => Promise<T>): Promise<T> {
   }
 }
 
-export async function configureProvider(opts: ConfigureOptions): Promise<void> {
+export async function configureProvider(opts: ConfigureOptions): Promise<{ wroteClaudeJSON: boolean }> {
   if (existsSync(opts.settingsPath)) {
     const skip = await ask(() =>
       confirm({ message: '已检测到现有 ~/.claude/settings.json，是否跳过？', default: true }),
     );
-    if (skip) return;
+    if (skip) return { wroteClaudeJSON: false };
   }
 
   const providerName = await ask(() =>
@@ -73,5 +73,8 @@ export async function configureProvider(opts: ConfigureOptions): Promise<void> {
     await mergeJSONFile(opts.claudeJsonPath, (m) => {
       m.hasCompletedOnboarding = true;
     });
+    return { wroteClaudeJSON: true };
   }
+
+  return { wroteClaudeJSON: false };
 }

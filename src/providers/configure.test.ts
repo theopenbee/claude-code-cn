@@ -36,13 +36,14 @@ describe('configureProvider', () => {
     mockedSelect.mockResolvedValueOnce('KimiCode'); // provider
     mockedInput.mockResolvedValueOnce('KIMI_KEY'); // api key
 
-    await configureProvider({ settingsPath, claudeJsonPath });
+    const result = await configureProvider({ settingsPath, claudeJsonPath });
 
     const out = JSON.parse(readFileSync(settingsPath, 'utf8'));
     expect(out.env).toMatchObject({
       ANTHROPIC_BASE_URL: 'https://api.kimi.com/coding/',
       ANTHROPIC_API_KEY: 'KIMI_KEY',
     });
+    expect(result.wroteClaudeJSON).toBe(false);
   });
 
   it('prompts for baseURL before key for Custom and writes both', async () => {
@@ -58,16 +59,31 @@ describe('configureProvider', () => {
     expect(out.env.ANTHROPIC_AUTH_TOKEN).toBe('TOKEN');
   });
 
-  it('prompts model for Aliyun and writes claude.json when needed (GLM)', async () => {
+  it('writes claude.json when provider has needClaudeJSON (GLM)', async () => {
     mockedSelect.mockResolvedValueOnce('Zhipu (GLM)');
     mockedInput.mockResolvedValueOnce('GLM_KEY');
 
-    await configureProvider({ settingsPath, claudeJsonPath });
+    const result = await configureProvider({ settingsPath, claudeJsonPath });
 
     const settings = JSON.parse(readFileSync(settingsPath, 'utf8'));
     const cjson = JSON.parse(readFileSync(claudeJsonPath, 'utf8'));
     expect(settings.env.ANTHROPIC_BASE_URL).toBe('https://open.bigmodel.cn/api/anthropic');
     expect(cjson.hasCompletedOnboarding).toBe(true);
+    expect(result.wroteClaudeJSON).toBe(true);
+  });
+
+  it('prompts for model selection for Aliyun and writes the chosen model', async () => {
+    mockedSelect
+      .mockResolvedValueOnce('Alibaba Cloud (Qwen)') // provider
+      .mockResolvedValueOnce('kimi-k2.5'); // model
+    mockedInput.mockResolvedValueOnce('ALI_KEY');
+
+    await configureProvider({ settingsPath, claudeJsonPath });
+
+    const out = JSON.parse(readFileSync(settingsPath, 'utf8'));
+    expect(out.env.ANTHROPIC_BASE_URL).toBe('https://coding.dashscope.aliyuncs.com/apps/anthropic');
+    expect(out.env.ANTHROPIC_AUTH_TOKEN).toBe('ALI_KEY');
+    expect(out.env.ANTHROPIC_MODEL).toBe('kimi-k2.5');
   });
 
   it('removes stale provider env keys before writing', async () => {
