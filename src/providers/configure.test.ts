@@ -72,9 +72,10 @@ describe('configureProvider', () => {
     expect(result.wroteClaudeJSON).toBe(true);
   });
 
-  it('prompts for model selection for Aliyun and writes the chosen model', async () => {
+  it('Aliyun Coding Plan: prompts plan → key → model and writes coding base URL', async () => {
     mockedSelect
       .mockResolvedValueOnce('Alibaba Cloud (Qwen)') // provider
+      .mockResolvedValueOnce('https://coding.dashscope.aliyuncs.com/apps/anthropic') // plan
       .mockResolvedValueOnce('kimi-k2.5'); // model
     mockedInput.mockResolvedValueOnce('ALI_KEY');
 
@@ -84,6 +85,63 @@ describe('configureProvider', () => {
     expect(out.env.ANTHROPIC_BASE_URL).toBe('https://coding.dashscope.aliyuncs.com/apps/anthropic');
     expect(out.env.ANTHROPIC_AUTH_TOKEN).toBe('ALI_KEY');
     expect(out.env.ANTHROPIC_MODEL).toBe('kimi-k2.5');
+    expect(out.env.ANTHROPIC_DEFAULT_SONNET_MODEL).toBe('kimi-k2.5');
+    expect(out.env.CLAUDE_CODE_SUBAGENT_MODEL).toBe('kimi-k2.5');
+  });
+
+  it('Aliyun Token Plan: model select offers Token Plan models only', async () => {
+    mockedSelect
+      .mockResolvedValueOnce('Alibaba Cloud (Qwen)')
+      .mockResolvedValueOnce('https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic')
+      .mockResolvedValueOnce('deepseek-v4-pro');
+    mockedInput.mockResolvedValueOnce('ALI_KEY');
+
+    await configureProvider({ settingsPath, claudeJsonPath });
+
+    const out = JSON.parse(readFileSync(settingsPath, 'utf8'));
+    expect(out.env.ANTHROPIC_BASE_URL).toBe(
+      'https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic',
+    );
+    expect(out.env.ANTHROPIC_MODEL).toBe('deepseek-v4-pro');
+
+    const modelCall = mockedSelect.mock.calls[2]?.[0] as unknown as {
+      choices: ReadonlyArray<{ value: string }>;
+      default?: string;
+    };
+    expect(modelCall.choices.map((c) => c.value)).toEqual([
+      'qwen3.6-plus',
+      'qwen3.6-flash',
+      'deepseek-v4-pro',
+      'deepseek-v4-flash',
+      'deepseek-v3.2',
+      'kimi-k2.6',
+      'kimi-k2.5',
+      'glm-5.1',
+      'glm-5',
+      'MiniMax-M2.5',
+    ]);
+    expect(modelCall.default).toBe('qwen3.6-plus');
+  });
+
+  it('Aliyun 按量计费: model select offers pay-as-you-go list including preview', async () => {
+    mockedSelect
+      .mockResolvedValueOnce('Alibaba Cloud (Qwen)')
+      .mockResolvedValueOnce('https://dashscope.aliyuncs.com/apps/anthropic')
+      .mockResolvedValueOnce('qwen3.6-max-preview');
+    mockedInput.mockResolvedValueOnce('ALI_KEY');
+
+    await configureProvider({ settingsPath, claudeJsonPath });
+
+    const out = JSON.parse(readFileSync(settingsPath, 'utf8'));
+    expect(out.env.ANTHROPIC_BASE_URL).toBe('https://dashscope.aliyuncs.com/apps/anthropic');
+    expect(out.env.ANTHROPIC_MODEL).toBe('qwen3.6-max-preview');
+
+    const modelCall = mockedSelect.mock.calls[2]?.[0] as unknown as {
+      choices: ReadonlyArray<{ value: string }>;
+    };
+    expect(modelCall.choices.map((c) => c.value)).toContain('qwen3.6-max-preview');
+    expect(modelCall.choices.map((c) => c.value)).toContain('MiniMax-M2.1');
+    expect(modelCall.choices.length).toBe(17);
   });
 
   it('removes stale provider env keys before writing', async () => {

@@ -61,14 +61,23 @@ export async function configureProvider(
 
   const apiKey = await ask(() => input({ message: spec.keyPrompt }));
 
+  let modelOptions: readonly string[] | undefined = spec.modelOptions;
+  let modelDefault = spec.modelDefault;
+  if (spec.baseURLOptions && baseURL) {
+    const chosen = spec.baseURLOptions.find((o) => o.value === baseURL);
+    if (chosen?.models) {
+      modelOptions = chosen.models;
+      modelDefault = chosen.modelDefault;
+    }
+  }
+
   let model: string | undefined;
-  const modelOptions = spec.modelOptions;
   if (modelOptions && modelOptions.length > 0) {
     model = await ask(() =>
       select({
         message: '请选择模型',
         choices: modelOptions.map((m) => ({ name: m, value: m })),
-        default: spec.modelDefault,
+        default: modelDefault,
       }),
     );
   }
