@@ -15,6 +15,8 @@ import type { ProviderEnv } from './env-keys.js';
 export interface BaseURLOption {
   name: string;
   value: string;
+  models?: readonly string[];
+  modelDefault?: string;
 }
 
 export interface BuildEnvArgs {
