@@ -40,8 +40,8 @@ export function glmEnv(apiKey: string): ProviderEnv {
   return {
     ANTHROPIC_AUTH_TOKEN: apiKey,
     ANTHROPIC_BASE_URL: 'https://open.bigmodel.cn/api/anthropic',
-    ANTHROPIC_DEFAULT_HAIKU_MODEL: 'glm-4.5-air',
-    ANTHROPIC_DEFAULT_SONNET_MODEL: 'glm-5-turbo',
+    ANTHROPIC_DEFAULT_HAIKU_MODEL: 'glm-5.1',
+    ANTHROPIC_DEFAULT_SONNET_MODEL: 'glm-5.1',
     ANTHROPIC_DEFAULT_OPUS_MODEL: 'glm-5.1',
     API_TIMEOUT_MS: '3000000',
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
