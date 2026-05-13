@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { confirm, input, select } from '@inquirer/prompts';
+import pc from 'picocolors';
 import { InterruptedError } from '../utils/errors.js';
 import { mergeJSONFile } from '../utils/json-merge.js';
 import { PROVIDER_ENV_KEYS, type ProviderEnv } from './env-keys.js';
@@ -42,6 +43,10 @@ export async function configureProvider(
   );
   const spec = PROVIDER_SPECS.find((s) => s.name === providerName);
   if (!spec) throw new Error(`未知 Provider: ${providerName}`);
+
+  if (spec.docsUrl) {
+    process.stdout.write(pc.cyan(`配置教程: ${spec.docsUrl}\n`));
+  }
 
   let baseURL: string | undefined;
   if (spec.baseURLPrompt) {
