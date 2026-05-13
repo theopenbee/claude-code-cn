@@ -13,14 +13,11 @@ export function moonshotEnv(apiKey: string): ProviderEnv {
     ANTHROPIC_BASE_URL: 'https://api.moonshot.cn/anthropic',
     ANTHROPIC_AUTH_TOKEN: apiKey,
     ANTHROPIC_MODEL: 'kimi-k2.5',
-    ANTHROPIC_SMALL_FAST_MODEL: 'kimi-k2.5',
     ANTHROPIC_DEFAULT_OPUS_MODEL: 'kimi-k2.5',
     ANTHROPIC_DEFAULT_SONNET_MODEL: 'kimi-k2.5',
     ANTHROPIC_DEFAULT_HAIKU_MODEL: 'kimi-k2.5',
     CLAUDE_CODE_SUBAGENT_MODEL: 'kimi-k2.5',
-    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
     ENABLE_TOOL_SEARCH: 'false',
-    API_TIMEOUT_MS: '600000',
   };
 }
 
