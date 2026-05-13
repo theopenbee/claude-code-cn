@@ -43,29 +43,37 @@ export async function configureProvider(
   const spec = PROVIDER_SPECS.find((s) => s.name === providerName);
   if (!spec) throw new Error(`未知 Provider: ${providerName}`);
 
-  let baseURL = '';
+  let baseURL: string | undefined;
   if (spec.baseURLPrompt) {
     const message = spec.baseURLPrompt;
-    baseURL = await ask(() => input({ message }));
+    const baseURLOptions = spec.baseURLOptions;
+    if (baseURLOptions && baseURLOptions.length > 0) {
+      baseURL = await ask(() =>
+        select({
+          message,
+          choices: baseURLOptions.map((o) => ({ name: o.name, value: o.value })),
+        }),
+      );
+    } else {
+      baseURL = await ask(() => input({ message }));
+    }
   }
 
   const apiKey = await ask(() => input({ message: spec.keyPrompt }));
 
-  let secondArg = '';
+  let model: string | undefined;
   const modelOptions = spec.modelOptions;
   if (modelOptions && modelOptions.length > 0) {
-    secondArg = await ask(() =>
+    model = await ask(() =>
       select({
         message: '请选择模型',
         choices: modelOptions.map((m) => ({ name: m, value: m })),
         default: spec.modelDefault,
       }),
     );
-  } else if (baseURL) {
-    secondArg = baseURL;
   }
 
-  const env: ProviderEnv = spec.buildEnv(apiKey, secondArg);
+  const env: ProviderEnv = spec.buildEnv({ apiKey, model, baseURL });
 
   await mergeJSONFile(opts.settingsPath, (m) => {
     const current = (m.env as Record<string, unknown> | undefined) ?? {};

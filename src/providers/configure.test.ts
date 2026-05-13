@@ -110,6 +110,23 @@ describe('configureProvider', () => {
     expect(out.env.ANTHROPIC_API_KEY).toBeUndefined();
   });
 
+  it('uses select for Xiaomi Mimo baseURL and model and writes both', async () => {
+    mockedSelect
+      .mockResolvedValueOnce('Xiaomi Mimo') // provider
+      .mockResolvedValueOnce('https://token-plan-cn.xiaomimimo.com/anthropic') // baseURL choice
+      .mockResolvedValueOnce('mimo-v2.5-pro[1m]'); // model choice
+    mockedInput.mockResolvedValueOnce('MIMO_KEY');
+
+    const result = await configureProvider({ settingsPath, claudeJsonPath });
+
+    const out = JSON.parse(readFileSync(settingsPath, 'utf8'));
+    expect(out.env.ANTHROPIC_BASE_URL).toBe('https://token-plan-cn.xiaomimimo.com/anthropic');
+    expect(out.env.ANTHROPIC_AUTH_TOKEN).toBe('MIMO_KEY');
+    expect(out.env.ANTHROPIC_MODEL).toBe('mimo-v2.5-pro[1m]');
+    expect(out.env.ANTHROPIC_DEFAULT_SONNET_MODEL).toBe('mimo-v2.5-pro[1m]');
+    expect(result.wroteClaudeJSON).toBe(true);
+  });
+
   it('skips when user confirms skip', async () => {
     writeFileSync(settingsPath, JSON.stringify({ env: { ANTHROPIC_API_KEY: 'keep' } }));
     mockedConfirm.mockResolvedValueOnce(true);

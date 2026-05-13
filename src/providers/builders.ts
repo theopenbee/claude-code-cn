@@ -86,14 +86,14 @@ export function tencentEnv(apiKey: string, model: string): ProviderEnv {
   return standardEnv('https://api.lkeap.cloud.tencent.com/coding/anthropic', apiKey, model);
 }
 
-export function mimoEnv(apiKey: string, baseURL: string): ProviderEnv {
+export function mimoEnv(apiKey: string, baseURL: string, model: string): ProviderEnv {
   return {
     ANTHROPIC_BASE_URL: baseURL,
     ANTHROPIC_AUTH_TOKEN: apiKey,
-    ANTHROPIC_MODEL: 'mimo-v2.5-pro',
-    ANTHROPIC_DEFAULT_SONNET_MODEL: 'mimo-v2.5-pro',
-    ANTHROPIC_DEFAULT_OPUS_MODEL: 'mimo-v2.5-pro',
-    ANTHROPIC_DEFAULT_HAIKU_MODEL: 'mimo-v2.5-pro',
+    ANTHROPIC_MODEL: model,
+    ANTHROPIC_DEFAULT_SONNET_MODEL: model,
+    ANTHROPIC_DEFAULT_OPUS_MODEL: model,
+    ANTHROPIC_DEFAULT_HAIKU_MODEL: model,
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
     API_TIMEOUT_MS: '3000000',
   };

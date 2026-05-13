@@ -101,14 +101,14 @@ describe('provider env builders', () => {
     });
   });
 
-  it('mimoEnv with user-provided baseURL', () => {
-    expect(mimoEnv('K', 'https://mimo.example')).toEqual({
+  it('mimoEnv with user-provided baseURL and model', () => {
+    expect(mimoEnv('K', 'https://mimo.example', 'mimo-v2.5-pro[1m]')).toEqual({
       ANTHROPIC_BASE_URL: 'https://mimo.example',
       ANTHROPIC_AUTH_TOKEN: 'K',
-      ANTHROPIC_MODEL: 'mimo-v2.5-pro',
-      ANTHROPIC_DEFAULT_SONNET_MODEL: 'mimo-v2.5-pro',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'mimo-v2.5-pro',
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'mimo-v2.5-pro',
+      ANTHROPIC_MODEL: 'mimo-v2.5-pro[1m]',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'mimo-v2.5-pro[1m]',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'mimo-v2.5-pro[1m]',
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'mimo-v2.5-pro[1m]',
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
       API_TIMEOUT_MS: '3000000',
     });

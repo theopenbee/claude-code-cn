@@ -12,46 +12,66 @@ import {
 } from './builders.js';
 import type { ProviderEnv } from './env-keys.js';
 
+export interface BaseURLOption {
+  name: string;
+  value: string;
+}
+
+export interface BuildEnvArgs {
+  apiKey: string;
+  model?: string;
+  baseURL?: string;
+}
+
 export interface ProviderSpec {
   name: string;
   keyPrompt: string;
   baseURLPrompt?: string;
+  baseURLOptions?: readonly BaseURLOption[];
   modelOptions?: string[];
   modelDefault?: string;
   needClaudeJSON: boolean;
-  buildEnv: (apiKey: string, modelOrBaseURL: string) => ProviderEnv;
+  buildEnv: (args: BuildEnvArgs) => ProviderEnv;
 }
+
+const MIMO_MODELS = [
+  'mimo-v2.5-pro',
+  'mimo-v2.5-pro[1m]',
+  'mimo-v2.5',
+  'mimo-v2.5[1m]',
+  'mimo-v2-flash',
+];
 
 export const PROVIDER_SPECS: readonly ProviderSpec[] = [
   {
     name: 'KimiCode',
     keyPrompt: '请输入 KimiCode API Key',
     needClaudeJSON: false,
-    buildEnv: kimiCodeEnv,
+    buildEnv: ({ apiKey }) => kimiCodeEnv(apiKey),
   },
   {
     name: 'Moonshot (Kimi)',
     keyPrompt: '请输入 Moonshot API Key',
     needClaudeJSON: false,
-    buildEnv: moonshotEnv,
+    buildEnv: ({ apiKey }) => moonshotEnv(apiKey),
   },
   {
     name: 'DeepSeek',
     keyPrompt: '请输入 DeepSeek API Key',
     needClaudeJSON: false,
-    buildEnv: deepseekEnv,
+    buildEnv: ({ apiKey }) => deepseekEnv(apiKey),
   },
   {
     name: 'Zhipu (GLM)',
     keyPrompt: '请输入 智谱 GLM API Key',
     needClaudeJSON: true,
-    buildEnv: glmEnv,
+    buildEnv: ({ apiKey }) => glmEnv(apiKey),
   },
   {
     name: 'MiniMax',
     keyPrompt: '请输入 MiniMax API Key',
     needClaudeJSON: true,
-    buildEnv: minimaxEnv,
+    buildEnv: ({ apiKey }) => minimaxEnv(apiKey),
   },
   {
     name: 'Alibaba Cloud (Qwen)',
@@ -59,7 +79,7 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
     modelOptions: ['qwen3.5-plus', 'kimi-k2.5', 'glm-5', 'MiniMax-M2.5'],
     modelDefault: 'qwen3.5-plus',
     needClaudeJSON: false,
-    buildEnv: aliyunEnv,
+    buildEnv: ({ apiKey, model }) => aliyunEnv(apiKey, model ?? ''),
   },
   {
     name: 'Volcengine (Doubao)',
@@ -76,7 +96,7 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
     ],
     modelDefault: 'doubao-seed-2.0-code',
     needClaudeJSON: true,
-    buildEnv: volcengineEnv,
+    buildEnv: ({ apiKey, model }) => volcengineEnv(apiKey, model ?? ''),
   },
   {
     name: 'Tencent Cloud',
@@ -93,20 +113,27 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
     ],
     modelDefault: 'tc-code-latest（auto）',
     needClaudeJSON: true,
-    buildEnv: tencentEnv,
+    buildEnv: ({ apiKey, model }) => tencentEnv(apiKey, model ?? ''),
   },
   {
     name: 'Xiaomi Mimo',
     keyPrompt: '请输入 小米 Mimo Token',
-    baseURLPrompt: '请输入 小米 Mimo Base URL',
+    baseURLPrompt: '请选择 小米 Mimo 计费方式',
+    baseURLOptions: [
+      { name: '按量付费', value: 'https://api.xiaomimimo.com/anthropic' },
+      { name: 'Token Plan', value: 'https://token-plan-cn.xiaomimimo.com/anthropic' },
+    ],
+    modelOptions: MIMO_MODELS,
+    modelDefault: 'mimo-v2.5-pro',
     needClaudeJSON: true,
-    buildEnv: mimoEnv,
+    buildEnv: ({ apiKey, baseURL, model }) =>
+      mimoEnv(apiKey, baseURL ?? '', model ?? 'mimo-v2.5-pro'),
   },
   {
     name: 'Custom provider',
     keyPrompt: '请输入 自定义 Provider Token',
     baseURLPrompt: '请输入 自定义 Provider Base URL',
     needClaudeJSON: false,
-    buildEnv: customEnv,
+    buildEnv: ({ apiKey, baseURL }) => customEnv(apiKey, baseURL ?? ''),
   },
 ];

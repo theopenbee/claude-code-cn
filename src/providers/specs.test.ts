@@ -43,8 +43,61 @@ describe('PROVIDER_SPECS', () => {
     expect(custom.baseURLPrompt).toBeTruthy();
   });
 
+  it('Mimo offers preset baseURL options (按量付费 / Token Plan)', () => {
+    const mimo = PROVIDER_SPECS.find((x) => x.name === 'Xiaomi Mimo') as ProviderSpec;
+    expect(mimo.baseURLOptions).toEqual([
+      { name: '按量付费', value: 'https://api.xiaomimimo.com/anthropic' },
+      { name: 'Token Plan', value: 'https://token-plan-cn.xiaomimimo.com/anthropic' },
+    ]);
+  });
+
+  it('Mimo lists the supported models with mimo-v2.5-pro default', () => {
+    const mimo = PROVIDER_SPECS.find((x) => x.name === 'Xiaomi Mimo') as ProviderSpec;
+    expect(mimo.modelOptions).toEqual([
+      'mimo-v2.5-pro',
+      'mimo-v2.5-pro[1m]',
+      'mimo-v2.5',
+      'mimo-v2.5[1m]',
+      'mimo-v2-flash',
+    ]);
+    expect(mimo.modelDefault).toBe('mimo-v2.5-pro');
+  });
+
+  it('Custom provider has no preset baseURL options (still free text)', () => {
+    const custom = PROVIDER_SPECS.find((x) => x.name === 'Custom provider') as ProviderSpec;
+    expect(custom.baseURLOptions).toBeUndefined();
+  });
+
   it('builds env via buildEnv', () => {
     const km = PROVIDER_SPECS.find((x) => x.name === 'KimiCode') as ProviderSpec;
-    expect(km.buildEnv('K', '')).toMatchObject({ ANTHROPIC_API_KEY: 'K' });
+    expect(km.buildEnv({ apiKey: 'K' })).toMatchObject({ ANTHROPIC_API_KEY: 'K' });
+  });
+
+  it('every spec.buildEnv returns a non-empty env when given full args', () => {
+    for (const spec of PROVIDER_SPECS) {
+      const env = spec.buildEnv({
+        apiKey: 'K',
+        model: spec.modelDefault ?? 'm',
+        baseURL: spec.baseURLOptions?.[0]?.value ?? 'https://example.test',
+      });
+      expect(Object.keys(env).length).toBeGreaterThan(0);
+    }
+  });
+
+  it('Mimo buildEnv wires baseURL and model into the env', () => {
+    const mimo = PROVIDER_SPECS.find((x) => x.name === 'Xiaomi Mimo') as ProviderSpec;
+    const env = mimo.buildEnv({
+      apiKey: 'T',
+      baseURL: 'https://token-plan-cn.xiaomimimo.com/anthropic',
+      model: 'mimo-v2-flash',
+    });
+    expect(env).toMatchObject({
+      ANTHROPIC_BASE_URL: 'https://token-plan-cn.xiaomimimo.com/anthropic',
+      ANTHROPIC_AUTH_TOKEN: 'T',
+      ANTHROPIC_MODEL: 'mimo-v2-flash',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'mimo-v2-flash',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'mimo-v2-flash',
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'mimo-v2-flash',
+    });
   });
 });
