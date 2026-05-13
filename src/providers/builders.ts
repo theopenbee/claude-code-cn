@@ -70,8 +70,17 @@ function standardEnv(baseURL: string, apiKey: string, model: string): ProviderEn
   };
 }
 
-export function aliyunEnv(apiKey: string, model: string): ProviderEnv {
-  return standardEnv('https://coding.dashscope.aliyuncs.com/apps/anthropic', apiKey, model);
+export function aliyunEnv(apiKey: string, baseURL: string, model: string): ProviderEnv {
+  return {
+    ANTHROPIC_AUTH_TOKEN: apiKey,
+    ANTHROPIC_BASE_URL: baseURL,
+    ANTHROPIC_MODEL: model,
+    ANTHROPIC_DEFAULT_HAIKU_MODEL: model,
+    ANTHROPIC_DEFAULT_SONNET_MODEL: model,
+    ANTHROPIC_DEFAULT_OPUS_MODEL: model,
+    CLAUDE_CODE_SUBAGENT_MODEL: model,
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+  };
 }
 
 export function volcengineEnv(apiKey: string, model: string): ProviderEnv {

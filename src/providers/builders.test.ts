@@ -74,12 +74,43 @@ describe('provider env builders', () => {
     });
   });
 
-  it('aliyunEnv with selected model', () => {
-    expect(aliyunEnv('K', 'qwen3.5-plus')).toEqual({
+  it('aliyunEnv writes full default model family for Token Plan', () => {
+    expect(
+      aliyunEnv(
+        'K',
+        'https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic',
+        'qwen3.6-plus',
+      ),
+    ).toEqual({
       ANTHROPIC_AUTH_TOKEN: 'K',
-      ANTHROPIC_BASE_URL: 'https://coding.dashscope.aliyuncs.com/apps/anthropic',
-      ANTHROPIC_MODEL: 'qwen3.5-plus',
+      ANTHROPIC_BASE_URL: 'https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic',
+      ANTHROPIC_MODEL: 'qwen3.6-plus',
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'qwen3.6-plus',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'qwen3.6-plus',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'qwen3.6-plus',
+      CLAUDE_CODE_SUBAGENT_MODEL: 'qwen3.6-plus',
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+    });
+  });
+
+  it('aliyunEnv wires baseURL for Coding Plan', () => {
+    expect(
+      aliyunEnv('K', 'https://coding.dashscope.aliyuncs.com/apps/anthropic', 'kimi-k2.5'),
+    ).toMatchObject({
+      ANTHROPIC_BASE_URL: 'https://coding.dashscope.aliyuncs.com/apps/anthropic',
+      ANTHROPIC_MODEL: 'kimi-k2.5',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'kimi-k2.5',
+      CLAUDE_CODE_SUBAGENT_MODEL: 'kimi-k2.5',
+    });
+  });
+
+  it('aliyunEnv wires baseURL for 按量计费', () => {
+    expect(
+      aliyunEnv('K', 'https://dashscope.aliyuncs.com/apps/anthropic', 'qwen3.6-max-preview'),
+    ).toMatchObject({
+      ANTHROPIC_BASE_URL: 'https://dashscope.aliyuncs.com/apps/anthropic',
+      ANTHROPIC_MODEL: 'qwen3.6-max-preview',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'qwen3.6-max-preview',
     });
   });
 

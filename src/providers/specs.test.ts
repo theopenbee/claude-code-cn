@@ -30,10 +30,71 @@ describe('PROVIDER_SPECS', () => {
     expect(map['Custom provider']).toBe(false);
   });
 
-  it('Aliyun has model options with qwen3.5-plus default', () => {
+  it('Aliyun offers three plan baseURL options with their own model lists', () => {
     const s = PROVIDER_SPECS.find((x) => x.name === 'Alibaba Cloud (Qwen)') as ProviderSpec;
-    expect(s.modelOptions).toEqual(['qwen3.5-plus', 'kimi-k2.5', 'glm-5', 'MiniMax-M2.5']);
-    expect(s.modelDefault).toBe('qwen3.5-plus');
+    expect(s.baseURLPrompt).toBeTruthy();
+    expect(s.baseURLOptions?.map((o) => o.name)).toEqual([
+      'Token Plan 团队版',
+      'Coding Plan',
+      '按量计费',
+    ]);
+    expect(s.baseURLOptions?.map((o) => o.value)).toEqual([
+      'https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic',
+      'https://coding.dashscope.aliyuncs.com/apps/anthropic',
+      'https://dashscope.aliyuncs.com/apps/anthropic',
+    ]);
+    expect(s.modelOptions).toBeUndefined();
+    expect(s.modelDefault).toBeUndefined();
+  });
+
+  it('Aliyun Token Plan lists all 10 models with qwen3.6-plus default', () => {
+    const s = PROVIDER_SPECS.find((x) => x.name === 'Alibaba Cloud (Qwen)') as ProviderSpec;
+    const plan = s.baseURLOptions?.find((o) => o.name === 'Token Plan 团队版');
+    expect(plan?.modelDefault).toBe('qwen3.6-plus');
+    expect(plan?.models).toEqual([
+      'qwen3.6-plus',
+      'qwen3.6-flash',
+      'deepseek-v4-pro',
+      'deepseek-v4-flash',
+      'deepseek-v3.2',
+      'kimi-k2.6',
+      'kimi-k2.5',
+      'glm-5.1',
+      'glm-5',
+      'MiniMax-M2.5',
+    ]);
+  });
+
+  it('Aliyun Coding Plan lists 4 models with qwen3.6-plus default', () => {
+    const s = PROVIDER_SPECS.find((x) => x.name === 'Alibaba Cloud (Qwen)') as ProviderSpec;
+    const plan = s.baseURLOptions?.find((o) => o.name === 'Coding Plan');
+    expect(plan?.modelDefault).toBe('qwen3.6-plus');
+    expect(plan?.models).toEqual(['qwen3.6-plus', 'kimi-k2.5', 'glm-5', 'MiniMax-M2.5']);
+  });
+
+  it('Aliyun 按量计费 lists 17 models including preview and dated versions', () => {
+    const s = PROVIDER_SPECS.find((x) => x.name === 'Alibaba Cloud (Qwen)') as ProviderSpec;
+    const plan = s.baseURLOptions?.find((o) => o.name === '按量计费');
+    expect(plan?.modelDefault).toBe('qwen3.6-plus');
+    expect(plan?.models).toEqual([
+      'qwen3.6-max-preview',
+      'qwen3.6-plus',
+      'qwen3.6-plus-2026-04-02',
+      'qwen3.6-flash',
+      'qwen3.6-flash-2026-04-16',
+      'deepseek-v4-pro',
+      'deepseek-v4-flash',
+      'deepseek-v3.2',
+      'kimi-k2.6',
+      'kimi-k2.5',
+      'kimi-k2-thinking',
+      'glm-5.1',
+      'glm-5',
+      'glm-4.7',
+      'glm-4.6',
+      'MiniMax-M2.5',
+      'MiniMax-M2.1',
+    ]);
   });
 
   it('Mimo and Custom prompt for baseURL', () => {
