@@ -1,6 +1,6 @@
 {
   "name": "@theopenbee/claude-code-cn",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Claude Code 中国大陆下载与配置工具",
   "type": "module",
   "bin": {
