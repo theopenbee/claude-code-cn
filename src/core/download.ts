@@ -23,7 +23,11 @@ export async function downloadFile(
   const bar =
     opts.showProgress !== false && total > 0
       ? new SingleBar(
-          { format: `${opts.label ?? '下载中'} [{bar}] {percentage}% | {value}/{total} bytes` },
+          {
+            format: `${opts.label ?? '下载中'} [{bar}] {percentage}% | {value}/{total} MB`,
+            formatValue: (v, _options, type) =>
+              type === 'value' || type === 'total' ? (v / 1024 / 1024).toFixed(2) : String(v),
+          },
           Presets.shades_classic,
         )
       : null;
