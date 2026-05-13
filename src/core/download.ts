@@ -1,4 +1,3 @@
-// src/core/download.ts
 import type { Hash } from 'node:crypto';
 import { once } from 'node:events';
 import { createWriteStream } from 'node:fs';
@@ -47,6 +46,7 @@ export async function downloadFile(
     }
   } catch (err) {
     file.destroy();
+    await reader.cancel().catch(() => {});
     throw err;
   } finally {
     bar?.stop();

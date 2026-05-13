@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Claude Code 中国大陆下载与配置工具",
   "type": "module",
-  "bin": { "ccc": "./dist/cli.js" },
+  "bin": { "ccc": "dist/cli.js" },
   "files": ["dist", "README.md", "LICENSE"],
   "engines": { "node": ">=18" },
   "scripts": {
