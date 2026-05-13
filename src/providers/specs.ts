@@ -7,7 +7,7 @@ import {
   mimoEnv,
   minimaxEnv,
   moonshotEnv,
-  tencentEnv,
+  standardEnv,
   volcengineEnv,
 } from './builders.js';
 import type { ProviderEnv } from './env-keys.js';
@@ -35,6 +35,19 @@ export interface ProviderSpec {
   needClaudeJSON: boolean;
   docsUrl?: string;
   buildEnv: (args: BuildEnvArgs) => ProviderEnv;
+}
+
+export function resolveModelChoices(
+  spec: ProviderSpec,
+  baseURL: string | undefined,
+): { options: readonly string[] | undefined; modelDefault: string | undefined } {
+  if (spec.baseURLOptions && baseURL) {
+    const chosen = spec.baseURLOptions.find((o) => o.value === baseURL);
+    if (chosen?.models) {
+      return { options: chosen.models, modelDefault: chosen.modelDefault };
+    }
+  }
+  return { options: spec.modelOptions, modelDefault: spec.modelDefault };
 }
 
 const MIMO_MODELS = [
@@ -201,7 +214,7 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
     ],
     needClaudeJSON: true,
     docsUrl: 'https://cloud.tencent.com/document/product/1823/130070',
-    buildEnv: ({ apiKey, baseURL, model }) => tencentEnv(apiKey, baseURL ?? '', model ?? ''),
+    buildEnv: ({ apiKey, baseURL, model }) => standardEnv(baseURL ?? '', apiKey, model ?? ''),
   },
   {
     name: 'Xiaomi Mimo',

@@ -4,7 +4,7 @@ import pc from 'picocolors';
 import { InterruptedError } from '../utils/errors.js';
 import { mergeJSONFile } from '../utils/json-merge.js';
 import { PROVIDER_ENV_KEYS, type ProviderEnv } from './env-keys.js';
-import { PROVIDER_SPECS } from './specs.js';
+import { PROVIDER_SPECS, resolveModelChoices } from './specs.js';
 
 export interface ConfigureOptions {
   settingsPath: string;
@@ -66,15 +66,7 @@ export async function configureProvider(
 
   const apiKey = await ask(() => input({ message: spec.keyPrompt }));
 
-  let modelOptions: readonly string[] | undefined = spec.modelOptions;
-  let modelDefault = spec.modelDefault;
-  if (spec.baseURLOptions && baseURL) {
-    const chosen = spec.baseURLOptions.find((o) => o.value === baseURL);
-    if (chosen?.models) {
-      modelOptions = chosen.models;
-      modelDefault = chosen.modelDefault;
-    }
-  }
+  const { options: modelOptions, modelDefault } = resolveModelChoices(spec, baseURL);
 
   let model: string | undefined;
   if (modelOptions && modelOptions.length > 0) {
