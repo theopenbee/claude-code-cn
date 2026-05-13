@@ -3,7 +3,7 @@ import { confirm, input, select } from '@inquirer/prompts';
 import { InterruptedError } from '../utils/errors.js';
 import { mergeJSONFile } from '../utils/json-merge.js';
 import { PROVIDER_ENV_KEYS, type ProviderEnv } from './env-keys.js';
-import { PROVIDER_SPECS, type ProviderSpec } from './specs.js';
+import { PROVIDER_SPECS } from './specs.js';
 
 export interface ConfigureOptions {
   settingsPath: string;
@@ -40,21 +40,24 @@ export async function configureProvider(
       choices: PROVIDER_SPECS.map((s) => ({ name: s.name, value: s.name })),
     }),
   );
-  const spec = PROVIDER_SPECS.find((s) => s.name === providerName) as ProviderSpec;
+  const spec = PROVIDER_SPECS.find((s) => s.name === providerName);
+  if (!spec) throw new Error(`未知 Provider: ${providerName}`);
 
   let baseURL = '';
   if (spec.baseURLPrompt) {
-    baseURL = await ask(() => input({ message: spec.baseURLPrompt as string }));
+    const message = spec.baseURLPrompt;
+    baseURL = await ask(() => input({ message }));
   }
 
   const apiKey = await ask(() => input({ message: spec.keyPrompt }));
 
   let secondArg = '';
-  if (spec.modelOptions && spec.modelOptions.length > 0) {
+  const modelOptions = spec.modelOptions;
+  if (modelOptions && modelOptions.length > 0) {
     secondArg = await ask(() =>
       select({
         message: '请选择模型',
-        choices: (spec.modelOptions as string[]).map((m) => ({ name: m, value: m })),
+        choices: modelOptions.map((m) => ({ name: m, value: m })),
         default: spec.modelDefault,
       }),
     );

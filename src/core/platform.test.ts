@@ -4,19 +4,8 @@ import {
   buildAssetName,
   isMuslWith,
   isSupportedPlatform,
-  mapArch,
   platformString,
 } from './platform.js';
-
-describe('mapArch', () => {
-  it.each([
-    ['x64', 'x64'],
-    ['arm64', 'arm64'],
-    ['ia32', 'ia32'],
-  ])('maps %s -> %s', (input, want) => {
-    expect(mapArch(input)).toBe(want);
-  });
-});
 
 describe('isMuslWith', () => {
   it('true when glob returns matches', () => {

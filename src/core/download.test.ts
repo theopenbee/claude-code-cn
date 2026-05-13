@@ -1,4 +1,3 @@
-// src/core/download.test.ts
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { type Server, createServer } from 'node:http';

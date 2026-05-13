@@ -1,4 +1,3 @@
-// src/core/installer.test.ts
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { type Server, createServer } from 'node:http';

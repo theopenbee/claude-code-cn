@@ -17,9 +17,7 @@ export async function mergeJSONFile(
     } catch {
       process.stderr.write(`warning: ${path} 不是合法 JSON, 将覆盖\n`);
     }
-  } catch {
-    // file missing — start fresh
-  }
+  } catch {}
   apply(existing);
   const out = `${JSON.stringify(existing, null, 2)}\n`;
   await writeFile(path, out, 'utf8');
