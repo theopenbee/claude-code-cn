@@ -121,10 +121,34 @@ describe('provider env builders', () => {
     });
   });
 
-  it('tencentEnv with selected model', () => {
-    expect(tencentEnv('K', 'tc-code-latest（auto）')).toMatchObject({
+  it('tencentEnv with Coding Plan baseURL and selected model', () => {
+    expect(
+      tencentEnv(
+        'K',
+        'https://api.lkeap.cloud.tencent.com/coding/anthropic',
+        'tc-code-latest（auto）',
+      ),
+    ).toMatchObject({
       ANTHROPIC_BASE_URL: 'https://api.lkeap.cloud.tencent.com/coding/anthropic',
       ANTHROPIC_MODEL: 'tc-code-latest（auto）',
+    });
+  });
+
+  it('tencentEnv with Token Plan 企业版 baseURL routes to tokenhub', () => {
+    expect(
+      tencentEnv('K', 'https://tokenhub.tencentmaas.com/plan/anthropic', 'deepseek-v4-pro'),
+    ).toMatchObject({
+      ANTHROPIC_BASE_URL: 'https://tokenhub.tencentmaas.com/plan/anthropic',
+      ANTHROPIC_MODEL: 'deepseek-v4-pro',
+    });
+  });
+
+  it('tencentEnv with Token Plan 个人版 baseURL routes to lkeap plan endpoint', () => {
+    expect(
+      tencentEnv('K', 'https://api.lkeap.cloud.tencent.com/plan/anthropic', 'glm-5.1'),
+    ).toMatchObject({
+      ANTHROPIC_BASE_URL: 'https://api.lkeap.cloud.tencent.com/plan/anthropic',
+      ANTHROPIC_MODEL: 'glm-5.1',
     });
   });
 

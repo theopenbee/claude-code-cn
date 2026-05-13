@@ -87,8 +87,8 @@ export function volcengineEnv(apiKey: string, model: string): ProviderEnv {
   return standardEnv('https://ark.cn-beijing.volces.com/api/coding', apiKey, model);
 }
 
-export function tencentEnv(apiKey: string, model: string): ProviderEnv {
-  return standardEnv('https://api.lkeap.cloud.tencent.com/coding/anthropic', apiKey, model);
+export function tencentEnv(apiKey: string, baseURL: string, model: string): ProviderEnv {
+  return standardEnv(baseURL, apiKey, model);
 }
 
 export function mimoEnv(apiKey: string, baseURL: string, model: string): ProviderEnv {

@@ -33,6 +33,7 @@ export interface ProviderSpec {
   modelOptions?: string[];
   modelDefault?: string;
   needClaudeJSON: boolean;
+  docsUrl?: string;
   buildEnv: (args: BuildEnvArgs) => ProviderEnv;
 }
 
@@ -49,30 +50,36 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
     name: 'KimiCode',
     keyPrompt: '请输入 KimiCode API Key',
     needClaudeJSON: false,
+    docsUrl: 'https://www.kimi.com/code/docs/third-party-tools/other-coding-agents.html',
     buildEnv: ({ apiKey }) => kimiCodeEnv(apiKey),
   },
   {
     name: 'Moonshot (Kimi)',
     keyPrompt: '请输入 Moonshot API Key',
     needClaudeJSON: false,
+    docsUrl:
+      'https://platform.kimi.com/docs/guide/agent-support#%E5%9C%A8-claude-code-%E4%B8%AD%E4%BD%BF%E7%94%A8-kimi-k2-5-%E6%A8%A1%E5%9E%8B',
     buildEnv: ({ apiKey }) => moonshotEnv(apiKey),
   },
   {
     name: 'DeepSeek',
     keyPrompt: '请输入 DeepSeek API Key',
     needClaudeJSON: false,
+    docsUrl: 'https://api-docs.deepseek.com/zh-cn/quick_start/agent_integrations/claude_code',
     buildEnv: ({ apiKey }) => deepseekEnv(apiKey),
   },
   {
     name: 'Zhipu (GLM)',
     keyPrompt: '请输入 智谱 GLM API Key',
     needClaudeJSON: true,
+    docsUrl: 'https://docs.bigmodel.cn/cn/coding-plan/tool/claude',
     buildEnv: ({ apiKey }) => glmEnv(apiKey),
   },
   {
     name: 'MiniMax',
     keyPrompt: '请输入 MiniMax API Key',
     needClaudeJSON: true,
+    docsUrl: 'https://platform.minimaxi.com/docs/token-plan/claude-code',
     buildEnv: ({ apiKey }) => minimaxEnv(apiKey),
   },
   {
@@ -129,6 +136,7 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
       },
     ],
     needClaudeJSON: false,
+    docsUrl: 'https://help.aliyun.com/zh/model-studio/claude-code',
     buildEnv: ({ apiKey, baseURL, model }) => aliyunEnv(apiKey, baseURL ?? '', model ?? ''),
   },
   {
@@ -146,24 +154,54 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
     ],
     modelDefault: 'doubao-seed-2.0-code',
     needClaudeJSON: true,
+    docsUrl: 'https://www.volcengine.com/docs/82379/1928262?lang=zh',
     buildEnv: ({ apiKey, model }) => volcengineEnv(apiKey, model ?? ''),
   },
   {
     name: 'Tencent Cloud',
     keyPrompt: '请输入 腾讯云 API Key',
-    modelOptions: [
-      'tc-code-latest（auto）',
-      'hunyuan-2.0-instruct',
-      'hunyuan-2.0-thinking',
-      'minimax-m2.5',
-      'kimi-k2.5',
-      'glm-5',
-      'hunyuan-t1',
-      'hunyuan-turbos',
+    baseURLPrompt: '请选择 腾讯云 计费方式',
+    baseURLOptions: [
+      {
+        name: 'Coding Plan',
+        value: 'https://api.lkeap.cloud.tencent.com/coding/anthropic',
+        models: [
+          'tc-code-latest（auto）',
+          'hunyuan-2.0-instruct',
+          'hunyuan-2.0-thinking',
+          'minimax-m2.5',
+          'kimi-k2.5',
+          'glm-5',
+          'hunyuan-t1',
+          'hunyuan-turbos',
+        ],
+        modelDefault: 'tc-code-latest（auto）',
+      },
+      {
+        name: 'Token Plan 企业版',
+        value: 'https://tokenhub.tencentmaas.com/plan/anthropic',
+        models: [
+          'deepseek-v4-pro',
+          'deepseek-v4-flash',
+          'glm-5.1',
+          'glm-5',
+          'kimi-k2.6',
+          'kimi-k2.5',
+          'minimax-m2.7',
+          'minimax-m2.5',
+        ],
+        modelDefault: 'deepseek-v4-pro',
+      },
+      {
+        name: 'Token Plan 个人版',
+        value: 'https://api.lkeap.cloud.tencent.com/plan/anthropic',
+        models: ['glm-5.1', 'glm-5', 'kimi-k2.5', 'minimax-m2.7', 'minimax-m2.5'],
+        modelDefault: 'glm-5.1',
+      },
     ],
-    modelDefault: 'tc-code-latest（auto）',
     needClaudeJSON: true,
-    buildEnv: ({ apiKey, model }) => tencentEnv(apiKey, model ?? ''),
+    docsUrl: 'https://cloud.tencent.com/document/product/1823/130070',
+    buildEnv: ({ apiKey, baseURL, model }) => tencentEnv(apiKey, baseURL ?? '', model ?? ''),
   },
   {
     name: 'Xiaomi Mimo',
@@ -176,6 +214,7 @@ export const PROVIDER_SPECS: readonly ProviderSpec[] = [
     modelOptions: MIMO_MODELS,
     modelDefault: 'mimo-v2.5-pro',
     needClaudeJSON: true,
+    docsUrl: 'https://platform.xiaomimimo.com/docs/zh-CN/integration/claudecode',
     buildEnv: ({ apiKey, baseURL, model }) =>
       mimoEnv(apiKey, baseURL ?? '', model ?? 'mimo-v2.5-pro'),
   },
